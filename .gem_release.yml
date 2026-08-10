@@ -1,0 +1,7 @@
+release:
+  tag: true
+  push: true
+  github: true
+  # Must be a string (not nil) — GitHub rejects body: null.
+  # Prefer bin/release so notes come from the version section of CHANGELOG.md.
+  descr: ''

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+version="$(ruby -e 'require_relative "lib/rails_api_keys/version"; puts RailsApiKeys::VERSION')"
+
+notes="$(
+  ruby -e '
+    version = ARGV.fetch(0)
+    text = File.read("CHANGELOG.md")
+    match = text.match(
+      /^## \[#{Regexp.escape(version)}\][^\n]*\n(.*?)(?=^## |\n\[[^\]]+\]:|\z)/m
+    )
+    abort "No CHANGELOG.md section for #{version}" unless match
+
+    notes = match[1].strip
+    abort "CHANGELOG.md section for #{version} is empty" if notes.empty?
+
+    puts notes
+  ' "$version"
+)"
+
+exec gem release --description "$notes" "$@"
