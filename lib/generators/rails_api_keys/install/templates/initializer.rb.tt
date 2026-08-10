@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+# Defaults: owner_class "User", token_prefix "<AppName>_ak_",
+# owner_active via active_for_authentication? when available.
+# Uncomment to override:
+#
+# RailsApiKeys.configure do |config|
+#   config.token_prefix = "myapp_ak_"
+# end

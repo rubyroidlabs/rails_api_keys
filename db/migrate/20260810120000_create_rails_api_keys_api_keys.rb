@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+class CreateRailsApiKeysApiKeys < ActiveRecord::Migration[7.0]
+  def change
+    create_table :rails_api_keys_api_keys do |t|
+      t.string :name, null: false
+      t.string :token_digest, null: false
+      t.string :token_display_prefix, null: false
+      t.string :permission, null: false, default: "read"
+      t.references :owner, polymorphic: true, null: false, index: true
+      t.datetime :revoked_at
+      t.datetime :last_used_at
+      t.timestamps
+    end
+
+    add_index :rails_api_keys_api_keys, :token_digest, unique: true
+    add_index :rails_api_keys_api_keys, :revoked_at
+  end
+end
