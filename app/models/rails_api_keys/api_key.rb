@@ -4,6 +4,11 @@ require "digest"
 require "securerandom"
 
 module RailsApiKeys
+  # Persists personal API keys for a polymorphic owner.
+  #
+  # Raw tokens are returned only from {.generate_for!} and are never stored.
+  # Authentication matches against a SHA-256 digest and refuses revoked or
+  # inactive-owner keys.
   class ApiKey < ApplicationRecord
     self.table_name = "rails_api_keys_api_keys"
 
@@ -22,6 +27,7 @@ module RailsApiKeys
     scope :active, -> { where(revoked_at: nil) }
 
     class << self
+      # Creates a key and returns +[record, raw_token]+. Show +raw_token+ once.
       def generate_for!(owner:, name:, permission:)
         raw_token = build_raw_token
         record = create!(
@@ -34,6 +40,7 @@ module RailsApiKeys
         [ record, raw_token ]
       end
 
+      # Returns an active key for +raw_token+, or +nil+. Touches +last_used_at+.
       def authenticate(raw_token)
         return if raw_token.blank?
 
@@ -58,6 +65,7 @@ module RailsApiKeys
       end
     end
 
+    # Soft-revokes the key so {.authenticate} no longer accepts it.
     def revoke!
       update!(revoked_at: Time.current)
     end

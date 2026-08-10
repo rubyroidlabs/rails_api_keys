@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module RailsApiKeys
+  # Optional host overrides. Set via {RailsApiKeys.configure}.
+  #
+  # Defaults: +owner_class+ is +"User"+, +token_prefix+ derives from the app
+  # name, and +owner_active+ uses Devise-style +active_for_authentication?+
+  # when available.
   class Configuration
     attr_accessor :owner_class, :token_prefix, :owner_active
 

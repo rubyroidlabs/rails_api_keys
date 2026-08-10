@@ -9,7 +9,7 @@ description: rails_api_keys engine architecture and current state
 
 ## Overview
 
-Reusable Rails engine that issues and authenticates personal API keys. Intentionally thin: keys + auth helpers only. Private gem for now (not published to Rubygems.org).
+Reusable Rails engine that issues and authenticates personal API keys. Intentionally thin: keys + auth helpers only. Public MIT-licensed gem.
 
 ## Naming
 
