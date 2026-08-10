@@ -133,7 +133,7 @@ This project is licensed under the [MIT License](./LICENSE).
 
 <p align="center">
   <a href="https://rubyroidlabs.com">
-    <img src="./docs/logo.svg" alt="Rubyroid Labs" width="220" />
+    <img src="./docs/logo.svg" alt="Rubyroid Labs" width="100%" />
   </a>
 </p>
 
