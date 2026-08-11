@@ -6,7 +6,6 @@ module Api
       include RailsApiKeys::Authentication
 
       before_action :authenticate_api_key!
-      before_action -> { require_api_permission!(permission_level) }
 
       def show
         render json: {
@@ -15,10 +14,11 @@ module Api
         }
       end
 
-      private
-
-      def permission_level
-        params[:required_permission].presence || :read
+      def create
+        render json: {
+          owner_id: current_api_owner.id,
+          permission: current_api_key.permission
+        }, status: :created
       end
     end
   end

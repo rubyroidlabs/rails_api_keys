@@ -51,18 +51,18 @@ RSpec.describe "RailsApiKeys::Authentication", type: :request do
     end
   end
 
-  describe "require_api_permission!" do
+  describe "method-based permissions" do
     context "with a read key" do
       let(:permission) { :read }
 
-      it "allows read" do
-        get "/api/v1/ping", params: { required_permission: "read" }, headers: auth_headers
+      it "allows GET" do
+        get "/api/v1/ping", headers: auth_headers
 
         expect(response).to have_http_status(:ok)
       end
 
-      it "forbids write" do
-        get "/api/v1/ping", params: { required_permission: "write" }, headers: auth_headers
+      it "forbids POST" do
+        post "/api/v1/ping", headers: auth_headers
 
         expect(response).to have_http_status(:forbidden)
         expect(JSON.parse(response.body)).to eq("error" => "Forbidden")
@@ -72,12 +72,16 @@ RSpec.describe "RailsApiKeys::Authentication", type: :request do
     context "with a read_write key" do
       let(:permission) { :read_write }
 
-      it "allows read and write" do
-        get "/api/v1/ping", params: { required_permission: "read" }, headers: auth_headers
-        expect(response).to have_http_status(:ok)
+      it "allows GET" do
+        get "/api/v1/ping", headers: auth_headers
 
-        get "/api/v1/ping", params: { required_permission: "write" }, headers: auth_headers
         expect(response).to have_http_status(:ok)
+      end
+
+      it "allows POST" do
+        post "/api/v1/ping", headers: auth_headers
+
+        expect(response).to have_http_status(:created)
       end
     end
   end

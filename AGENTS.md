@@ -23,7 +23,7 @@ No custom `require:` needed.
 **In this gem**
 
 - `RailsApiKeys::ApiKey` — create (return raw once), SHA-256 digest, soft revoke, `read` / `read_write`
-- `RailsApiKeys::Authentication` — `authenticate_api_key!`, `require_api_permission!`, `current_api_key` / `current_api_owner`
+- `RailsApiKeys::Authentication` — `authenticate_api_key!` (Bearer + method-based permission), `current_api_key` / `current_api_owner`
 - `RailsApiKeys.configure` — optional overrides (`owner_class`, `token_prefix`, `owner_active`)
 - Install generator (migration + initializer)
 

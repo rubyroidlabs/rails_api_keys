@@ -5,9 +5,10 @@ require "active_support/concern"
 module RailsApiKeys
   # Controller concern for +ActionController::API+.
   #
-  # Include and call {#authenticate_api_key!} / {#require_api_permission!} from
-  # +before_action+. After a successful authenticate, +current_api_key+ and
-  # +current_api_owner+ are set.
+  # Include and call {#authenticate_api_key!} from +before_action+. After a
+  # successful authenticate, +current_api_key+ and +current_api_owner+ are set.
+  # Permission is enforced from the HTTP method: GET/HEAD require read; other
+  # methods require write.
   #
   # Expects +Authorization: Bearer <raw_token>+.
   module Authentication
@@ -19,7 +20,8 @@ module RailsApiKeys
 
     private
 
-    # Authenticates the Bearer token. Renders 401 and returns +false+ on failure.
+    # Authenticates the Bearer token and enforces method-based permission.
+    # Renders 401 on auth failure, 403 when the key lacks the required level.
     def authenticate_api_key!
       token = bearer_token
       key = RailsApiKeys::ApiKey.authenticate(token)
@@ -31,16 +33,15 @@ module RailsApiKeys
 
       @current_api_key = key
       @current_api_owner = key.owner
-      true
+      enforce_api_permission!
     end
 
-    # Requires +:read+ or +:write+. +read_write+ keys satisfy both. Renders 403 on failure.
-    def require_api_permission!(level)
+    def enforce_api_permission!
       allowed =
-        case level.to_sym
-        when :read then current_api_key&.allows_read?
-        when :write then current_api_key&.allows_write?
-        else false
+        if request.get? || request.head?
+          current_api_key.allows_read?
+        else
+          current_api_key.allows_write?
         end
 
       return true if allowed

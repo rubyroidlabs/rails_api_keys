@@ -88,7 +88,6 @@ class Api::V1::BaseController < ActionController::API
   include RailsApiKeys::Authentication
 
   before_action :authenticate_api_key!
-  before_action -> { require_api_permission!(:read) }
 
   # current_api_key / current_api_owner are available after authenticate
 end
@@ -100,12 +99,14 @@ Clients send:
 Authorization: Bearer <raw_token>
 ```
 
+`authenticate_api_key!` rejects missing/invalid tokens with 401, then enforces permission from the HTTP method: GET/HEAD require read; other methods require write (403 if the key lacks it).
+
 ## Permissions
 
-| Permission | `allows_read?` | `allows_write?` |
+| Permission | GET/HEAD | Other methods |
 | --- | --- | --- |
-| `read` | yes | no |
-| `read_write` | yes | yes |
+| `read` | allowed | forbidden |
+| `read_write` | allowed | allowed |
 
 Permissions are immutable after create. Revoke with `revoke!` (sets `revoked_at`).
 

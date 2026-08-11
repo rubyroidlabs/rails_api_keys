@@ -47,8 +47,7 @@ Host initializers should only set overrides; do not restate defaults.
 
 ### `RailsApiKeys::Authentication`
 
-- `authenticate_api_key!` — Bearer token → `current_api_key` / `current_api_owner`, 401 on failure
-- `require_api_permission!(:read|:write)` — 403 if lacking (`read_write` includes read)
+- `authenticate_api_key!` — Bearer token → `current_api_key` / `current_api_owner`; 401 on auth failure; GET/HEAD require read, other methods require write (403 if lacking)
 
 ### Install
 
