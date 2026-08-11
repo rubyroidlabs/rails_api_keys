@@ -13,5 +13,29 @@ RSpec.describe RailsApiKeys::Owner do
       expect(RailsApiKeys.owner_class?(Organization)).to be(false)
       expect(Organization.reflect_on_association(:api_keys)).to be_nil
     end
+
+    it "adds create_api_key! on User" do
+      user = User.create!(email: "owner@example.com", active: true)
+
+      key, raw = user.create_api_key!(name: "Zapier", permission: :read)
+
+      expect(key).to be_persisted
+      expect(key.owner).to eq(user)
+      expect(raw).to be_present
+    end
+
+    it "adds create_api_key! on Company" do
+      company = Company.create!(name: "Acme")
+
+      key, raw = company.create_api_key!(name: "Billing", permission: :read_write)
+
+      expect(key).to be_persisted
+      expect(key.owner).to eq(company)
+      expect(raw).to be_present
+    end
+
+    it "does not add create_api_key! on Organization" do
+      expect(Organization.instance_methods).not_to include(:create_api_key!)
+    end
   end
 end

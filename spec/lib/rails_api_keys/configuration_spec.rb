@@ -9,9 +9,9 @@ RSpec.describe RailsApiKeys::Configuration do
     end
 
     it "uses an explicit token_prefix when set" do
-      config.token_prefix = "hris_ak_"
+      config.token_prefix = "myapp_ak_"
 
-      expect(config.resolved_token_prefix).to eq("hris_ak_")
+      expect(config.resolved_token_prefix).to eq("myapp_ak_")
     end
   end
 

@@ -24,7 +24,7 @@ No custom `require:` needed.
 
 - `RailsApiKeys::ApiKey` — create (return raw once), SHA-256 digest, soft revoke, `read` / `read_write`
 - `RailsApiKeys::Authentication` — `authenticate_api_key!` (Bearer + method-based permission), `current_api_key` / `current_api_owner`
-- `has_api_keys` — owner opt-in macro (polymorphic `has_many` + registry); multiple models allowed
+- `has_api_keys` — owner opt-in macro (polymorphic `has_many` + registry + `create_api_key!`); multiple models allowed
 - `RailsApiKeys.configure` — optional overrides (`token_prefix`, `owner_active`)
 - Install generator (migration + initializer)
 
@@ -36,7 +36,7 @@ No custom `require:` needed.
 
 - Do **not** reintroduce unused Rails scaffolds unless a real feature needs them.
 - Do **not** put host-app business endpoints in the engine.
-- Raw token is returned only from `generate_for!`; never store plaintext.
+- Raw token is returned only from `create_api_key!` / `generate_for!`; never store plaintext.
 - Permissions are immutable after create; revoke via soft `revoked_at`.
 - Prefer single quotes; `# frozen_string_literal: true` on Ruby files.
 - Run `bundle exec rspec` and `bundle exec rubocop` after non-trivial changes.

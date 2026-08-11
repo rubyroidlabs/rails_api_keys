@@ -9,7 +9,7 @@ Host apps own UI, routes, and domain APIs. This gem stays thin on purpose.
 ## What this gem includes
 
 - `RailsApiKeys::ApiKey` — issue, authenticate, revoke
-- `has_api_keys` — opt-in owner macro (supports multiple models)
+- `has_api_keys` — opt-in owner macro with `create_api_key!` (supports multiple models)
 - `RailsApiKeys::Authentication` — controller concern for Bearer tokens
 - Install generator (migration + initializer)
 
@@ -68,11 +68,7 @@ end
 ## Usage
 
 ```ruby
-key, raw = RailsApiKeys::ApiKey.generate_for!(
-  owner: current_user,
-  name: "Zapier",
-  permission: :read
-)
+key, raw = current_user.create_api_key!(name: "Zapier", permission: :read)
 # Show `raw` once — it cannot be recovered later.
 
 RailsApiKeys::ApiKey.authenticate(raw) # => key or nil
@@ -108,7 +104,7 @@ Permissions are immutable after create. Revoke with `revoke!` (sets `revoked_at`
 
 ## Security notes
 
-- Raw tokens are returned only from `generate_for!` and never stored
+- Raw tokens are returned only from `create_api_key!` / `generate_for!` and never stored
 - Digests use SHA-256 (`token_digest`); UI can show `token_display_prefix`
 - Soft revoke via `revoked_at`; authentication ignores revoked keys
 

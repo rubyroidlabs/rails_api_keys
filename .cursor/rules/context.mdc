@@ -29,6 +29,7 @@ Reusable Rails engine that issues and authenticates personal API keys. Intention
 ### `has_api_keys` (on owner models)
 
 - Declares polymorphic `has_many :api_keys` and registers the model as an allowed owner
+- Adds `create_api_key!(name:, permission:)` → `[record, raw_token]` (wraps `ApiKey.generate_for!`)
 - Multiple models may opt in (e.g. `User`, `Company`)
 - Models without the macro cannot own keys
 

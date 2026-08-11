@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `has_api_keys` — Active Record macro for owner models (`User`, `Company`, etc.); registers allowed polymorphic owners
+- `create_api_key!` — instance helper on owners that call `has_api_keys` (wraps `ApiKey.generate_for!`)
 
 ### Changed
 
