@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/rubyroidlabs/rails_api_keys/security/advisories/new
+    about: Report security issues privately — do not open a public issue.
+  - name: Documentation / questions
+    url: https://github.com/rubyroidlabs/rails_api_keys/blob/main/README.md
+    about: Start with the README; open a feature request if something is missing.

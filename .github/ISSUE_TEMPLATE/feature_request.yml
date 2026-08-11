@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement that fits this thin engine
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This gem stays thin on purpose (keys + auth helpers). Host UI, routes, and domain APIs belong in the host app.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should the gem behave?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds in the host app, other APIs, etc. (optional).
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This belongs in the gem (not host UI / routes / domain APIs)
+          required: true

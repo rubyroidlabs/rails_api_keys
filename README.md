@@ -1,6 +1,7 @@
 # rails_api_keys
 
 [![CI](https://github.com/rubyroidlabs/rails_api_keys/actions/workflows/ci.yml/badge.svg)](https://github.com/rubyroidlabs/rails_api_keys/actions/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/rails_api_keys.svg?icon=si%3Arubygems&icon_color=%23ee3f2d)](https://badge.fury.io/rb/rails_api_keys)
 
 Reusable Rails engine for personal API keys: create (reveal once), hash at rest, revoke, and authenticate via `Authorization: Bearer <token>`.
 
@@ -117,6 +118,12 @@ bin/rubocop
 ```
 
 See [CHANGELOG.md](./CHANGELOG.md) for release notes. Agent-oriented notes live in [`AGENTS.md`](./AGENTS.md).
+
+## Contributing
+
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) and the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+To report a security vulnerability privately, see [SECURITY.md](./SECURITY.md).
 
 ## License
 
