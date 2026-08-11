@@ -45,7 +45,21 @@ class Company < ApplicationRecord
 end
 ```
 
-That declares `has_many :api_keys` and allows the model to own keys. Build your own controllers/UI to create keys (show the raw token once), list them, and revoke.
+That declares `has_many :api_keys` and allows the model to own keys. Build your own controllers/UI to create keys (show the raw token once), list them, and revoke — or use the optional companion gem below.
+
+## Optional UI
+
+For a ready-made HTML/JSON management UI (create, reveal once + copy, list active keys, revoke), install the companion gem [`rails_api_keys-ui`](https://github.com/rubyroidlabs/rails_api_keys-ui):
+
+![API keys UI — list and revoke](./docs/list_demo.png)
+
+```ruby
+# Gemfile
+gem "rails_api_keys"
+gem "rails_api_keys-ui"
+```
+
+See that repo for install generators, route helpers, embeddable panel, and configuration.
 
 ## Configuration
 
