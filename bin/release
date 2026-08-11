@@ -3,6 +3,30 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+if [[ -z "${GEM_RELEASE_TOKEN:-}" ]]; then
+  command -v gh >/dev/null 2>&1 || {
+    echo 'gh is required (or set GEM_RELEASE_TOKEN)' >&2
+    exit 1
+  }
+  GEM_RELEASE_TOKEN="$(gh auth token)"
+  export GEM_RELEASE_TOKEN
+fi
+
+if [[ -z "${GEM_HOST_OTP_CODE:-}" ]]; then
+  if command -v op >/dev/null 2>&1; then
+    op_cli=op
+  elif command -v 1p >/dev/null 2>&1; then
+    op_cli=1p
+  else
+    echo '1Password CLI (op) is required (or set GEM_HOST_OTP_CODE)' >&2
+    exit 1
+  fi
+
+  rubygems_item="${OP_RUBYGEMS_ITEM:-Rubygems}"
+  GEM_HOST_OTP_CODE="$("$op_cli" item get "$rubygems_item" --otp)"
+  export GEM_HOST_OTP_CODE
+fi
+
 version="$(ruby -e 'require_relative "lib/rails_api_keys/version"; puts RailsApiKeys::VERSION')"
 
 notes="$(
