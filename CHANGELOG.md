@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-08-10
 
+### Added
+
+- `has_api_keys` — Active Record macro for owner models (`User`, `Company`, etc.); registers allowed polymorphic owners
+
 ### Changed
 
 - `authenticate_api_key!` now enforces permissions from the HTTP method: GET/HEAD require read; other methods require write
@@ -16,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `require_api_permission!` — hosts no longer call this separately
+- `config.owner_class` — replaced by opt-in `has_api_keys` on each owner model
 
 ## [0.1.0] - 2026-08-10
 

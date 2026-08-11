@@ -26,11 +26,16 @@ Reusable Rails engine that issues and authenticates personal API keys. Intention
 
 ## Public surface
 
+### `has_api_keys` (on owner models)
+
+- Declares polymorphic `has_many :api_keys` and registers the model as an allowed owner
+- Multiple models may opt in (e.g. `User`, `Company`)
+- Models without the macro cannot own keys
+
 ### Configuration (`RailsApiKeys.configure`) — all optional
 
 | Option | Default | Purpose |
 |--------|---------|---------|
-| `owner_class` | `"User"` | Expected owner class name |
 | `token_prefix` | `nil` → `"#{AppName.downcase}_ak_"` | Prefix for generated raw tokens |
 | `owner_active` | uses `active_for_authentication?` when present | Gate authenticate on owner liveness |
 
@@ -62,7 +67,7 @@ bin/rails db:migrate
 app/models/rails_api_keys/   # ApplicationRecord, ApiKey
 db/migrate/
 lib/rails_api_keys.rb
-lib/rails_api_keys/          # version, configuration, authentication, engine
+lib/rails_api_keys/          # version, configuration, authentication, owner, engine
 lib/generators/rails_api_keys/install/
 config/routes.rb             # Empty — host owns routes
 ```
@@ -74,7 +79,7 @@ gem "rails_api_keys", path: "../rails_api_keys" # or git:
 ```
 
 1. Install generator + migrate
-2. `has_many :api_keys, as: :owner, class_name: "RailsApiKeys::ApiKey"`
+2. `has_api_keys` on each owner model
 3. Host UI for create (show raw once) / list / revoke
 4. API controllers include `RailsApiKeys::Authentication`
 

@@ -9,6 +9,7 @@ Host apps own UI, routes, and domain APIs. This gem stays thin on purpose.
 ## What this gem includes
 
 - `RailsApiKeys::ApiKey` — issue, authenticate, revoke
+- `has_api_keys` — opt-in owner macro (supports multiple models)
 - `RailsApiKeys::Authentication` — controller concern for Bearer tokens
 - Install generator (migration + initializer)
 
@@ -29,32 +30,28 @@ bin/rails generate rails_api_keys:install
 bin/rails db:migrate
 ```
 
-Until the gem is published on RubyGems, you can use git or a local path:
-
-```ruby
-gem "rails_api_keys", git: "https://github.com/rubyroidlabs/rails_api_keys.git"
-# or: gem "rails_api_keys", path: "../rails_api_keys"
-```
-
 ## Host setup
 
-On the owner model (defaults to `User`):
+Opt in on each owner model with `has_api_keys` (any number of models):
 
 ```ruby
 class User < ApplicationRecord
-  has_many :api_keys, as: :owner, class_name: "RailsApiKeys::ApiKey", dependent: :destroy
+  has_api_keys
+end
+
+class Company < ApplicationRecord
+  has_api_keys
 end
 ```
 
-Build your own controllers/UI to create keys (show the raw token once), list them, and revoke.
+That declares `has_many :api_keys` and allows the model to own keys. Build your own controllers/UI to create keys (show the raw token once), list them, and revoke.
 
 ## Configuration
 
-Defaults suit a typical Devise `User` host:
+Defaults suit a typical Devise `User` host; multiple owners are supported via `has_api_keys`:
 
 | Option | Default | Purpose |
 | --- | --- | --- |
-| `owner_class` | `"User"` | Expected owner class name |
 | `token_prefix` | `"#{AppName.downcase}_ak_"` | Prefix on generated raw tokens |
 | `owner_active` | `active_for_authentication?` when present | Reject keys whose owner is inactive |
 
@@ -64,7 +61,6 @@ Override only what you need:
 # config/initializers/rails_api_keys.rb
 RailsApiKeys.configure do |config|
   # config.token_prefix = "myapp_ak_"
-  # config.owner_class = "Admin"
   # config.owner_active = ->(owner) { owner.active? }
 end
 ```

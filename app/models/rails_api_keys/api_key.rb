@@ -21,7 +21,7 @@ module RailsApiKeys
 
     validates :name, :token_digest, :token_display_prefix, :permission, presence: true
     validates :token_digest, uniqueness: true
-    validate :owner_matches_configured_class
+    validate :owner_declares_has_api_keys
     validate :permission_immutable, on: :update
 
     scope :active, -> { where(revoked_at: nil) }
@@ -92,13 +92,11 @@ module RailsApiKeys
 
     private
 
-    def owner_matches_configured_class
+    def owner_declares_has_api_keys
       return if owner.blank?
+      return if RailsApiKeys.owner_class?(owner.class)
 
-      expected = RailsApiKeys.configuration.owner_class_name
-      return if owner.class.name == expected
-
-      errors.add(:owner, "must be a #{expected}")
+      errors.add(:owner, "must declare has_api_keys")
     end
 
     def permission_immutable

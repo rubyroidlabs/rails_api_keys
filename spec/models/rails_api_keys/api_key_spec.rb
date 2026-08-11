@@ -2,6 +2,7 @@
 
 RSpec.describe RailsApiKeys::ApiKey, type: :model do
   let(:user) { User.create!(email: "manager@example.com") }
+  let(:company) { Company.create!(name: "Acme Corp") }
 
   describe ".generate_for!" do
     it "creates a key and returns the raw token once" do
@@ -16,6 +17,15 @@ RSpec.describe RailsApiKeys::ApiKey, type: :model do
       expect(record.attributes.values).not_to include(raw)
     end
 
+    it "creates a key for a Company owner" do
+      record, raw = described_class.generate_for!(owner: company, name: "Billing", permission: :read_write)
+
+      expect(record).to be_persisted
+      expect(record.owner).to eq(company)
+      expect(record).to be_read_write
+      expect(described_class.authenticate(raw)).to eq(record)
+    end
+
     it "uses a custom token_prefix when configured" do
       RailsApiKeys.configure { |c| c.token_prefix = "custom_ak_" }
 
@@ -24,12 +34,12 @@ RSpec.describe RailsApiKeys::ApiKey, type: :model do
       expect(raw).to start_with("custom_ak_")
     end
 
-    it "rejects owners that do not match owner_class" do
+    it "rejects owners that do not declare has_api_keys" do
       organization = Organization.create!(name: "Acme")
 
       expect {
         described_class.generate_for!(owner: organization, name: "Bad", permission: :read)
-      }.to raise_error(ActiveRecord::RecordInvalid, /Owner must be a User/)
+      }.to raise_error(ActiveRecord::RecordInvalid, /Owner must declare has_api_keys/)
     end
   end
 

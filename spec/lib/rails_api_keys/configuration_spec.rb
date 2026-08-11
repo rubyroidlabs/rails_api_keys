@@ -15,14 +15,6 @@ RSpec.describe RailsApiKeys::Configuration do
     end
   end
 
-  describe "#owner_class_name" do
-    it "stringifies owner_class" do
-      config.owner_class = User
-
-      expect(config.owner_class_name).to eq("User")
-    end
-  end
-
   describe "#owner_active?" do
     it "delegates to active_for_authentication? when available" do
       owner = User.create!(email: "a@example.com", active: true)

@@ -24,7 +24,8 @@ No custom `require:` needed.
 
 - `RailsApiKeys::ApiKey` — create (return raw once), SHA-256 digest, soft revoke, `read` / `read_write`
 - `RailsApiKeys::Authentication` — `authenticate_api_key!` (Bearer + method-based permission), `current_api_key` / `current_api_owner`
-- `RailsApiKeys.configure` — optional overrides (`owner_class`, `token_prefix`, `owner_active`)
+- `has_api_keys` — owner opt-in macro (polymorphic `has_many` + registry); multiple models allowed
+- `RailsApiKeys.configure` — optional overrides (`token_prefix`, `owner_active`)
 - Install generator (migration + initializer)
 
 **Not in this gem**
@@ -55,4 +56,5 @@ Specs live under `spec/` and boot `spec/dummy` (sqlite).
 - Project state: `.cursor/rules/context.mdc`
 - Model: `app/models/rails_api_keys/api_key.rb`
 - Auth: `lib/rails_api_keys/authentication.rb`
+- Owner macro: `lib/rails_api_keys/owner.rb`
 - Config: `lib/rails_api_keys/configuration.rb`

@@ -29,6 +29,11 @@ RSpec.configure do |config|
         t.timestamps
       end
 
+      create_table :companies, force: true do |t|
+        t.string :name, null: false
+        t.timestamps
+      end
+
       create_table :rails_api_keys_api_keys, force: true do |t|
         t.string :name, null: false
         t.string :token_digest, null: false
@@ -47,9 +52,5 @@ RSpec.configure do |config|
 
   config.before do
     RailsApiKeys.reset_configuration!
-    RailsApiKeys.configure do |c|
-      c.owner_class = "User"
-      c.owner_active = ->(owner) { owner.active_for_authentication? }
-    end
   end
 end
