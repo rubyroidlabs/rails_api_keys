@@ -3,6 +3,7 @@
 require "set"
 require "rails_api_keys/version"
 require "rails_api_keys/configuration"
+require "rails_api_keys/ip_allowlist"
 require "rails_api_keys/authentication"
 require "rails_api_keys/owner"
 require "rails_api_keys/engine"

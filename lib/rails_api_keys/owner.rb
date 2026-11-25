@@ -17,8 +17,13 @@ module RailsApiKeys
         RailsApiKeys.register_owner_class!(self)
 
         # Creates a key for this owner and returns +[record, raw_token]+.
-        define_method(:create_api_key!) do |name:, permission:|
-          RailsApiKeys::ApiKey.generate_for!(owner: self, name: name, permission: permission)
+        define_method(:create_api_key!) do |name:, permission:, allowed_ips: []|
+          RailsApiKeys::ApiKey.generate_for!(
+            owner: self,
+            name: name,
+            permission: permission,
+            allowed_ips: allowed_ips
+          )
         end
       end
     end

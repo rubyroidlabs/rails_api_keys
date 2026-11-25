@@ -85,4 +85,36 @@ RSpec.describe "RailsApiKeys::Authentication", type: :request do
       end
     end
   end
+
+  describe "IP allowlist enforcement" do
+    let!(:pair) do
+      RailsApiKeys::ApiKey.generate_for!(
+        owner: user,
+        name: "IP Scoped",
+        permission: :read,
+        allowed_ips: [ "203.0.113.10", "10.0.0.0/24" ]
+      )
+    end
+
+    it "allows requests from an allowed single IP and updates last_used_at" do
+      get "/api/v1/ping", headers: auth_headers, env: { "REMOTE_ADDR" => "203.0.113.10" }
+
+      expect(response).to have_http_status(:ok)
+      expect(key.reload.last_used_at).to be_present
+    end
+
+    it "allows requests from an allowed CIDR range" do
+      get "/api/v1/ping", headers: auth_headers, env: { "REMOTE_ADDR" => "10.0.0.77" }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns 403 and does not update last_used_at for a disallowed IP" do
+      get "/api/v1/ping", headers: auth_headers, env: { "REMOTE_ADDR" => "198.51.100.9" }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body)).to eq("error" => "Forbidden")
+      expect(key.reload.last_used_at).to be_nil
+    end
+  end
 end

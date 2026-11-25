@@ -39,6 +39,7 @@ RSpec.configure do |config|
         t.string :token_digest, null: false
         t.string :token_display_prefix, null: false
         t.string :permission, null: false, default: "read"
+        t.json :allowed_ips, null: false, default: []
         t.references :owner, polymorphic: true, null: false, index: true
         t.datetime :revoked_at
         t.datetime :last_used_at

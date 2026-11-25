@@ -27,10 +27,11 @@ RSpec.describe RailsApiKeys::Owner do
     it "adds create_api_key! on Company" do
       company = Company.create!(name: "Acme")
 
-      key, raw = company.create_api_key!(name: "Billing", permission: :read_write)
+      key, raw = company.create_api_key!(name: "Billing", permission: :read_write, allowed_ips: [ "10.0.0.0/24" ])
 
       expect(key).to be_persisted
       expect(key.owner).to eq(company)
+      expect(key.allowed_ips).to eq([ "10.0.0.0/24" ])
       expect(raw).to be_present
     end
 

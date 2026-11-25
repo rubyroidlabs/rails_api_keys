@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-25
+
+### Added
+
+- Optional `allowed_ips` column (`json`, default `[]`) on `rails_api_keys_api_keys` supporting single IPv4/IPv6 addresses and CIDR ranges via `IPAddr`
+- `allowed_ips:` optional keyword argument on `RailsApiKeys::ApiKey.generate_for!` and `owner.create_api_key!`
+- `RailsApiKeys::ApiKey#allows_ip?` and IP allowlist enforcement in `authenticate_api_key!` (renders `403 Forbidden` without updating `last_used_at` when a request comes from a disallowed IP)
+- `touch_last_used:` optional keyword argument on `RailsApiKeys::ApiKey.authenticate`
+
 ## [0.2.0] - 2026-08-10
 
 ### Added
@@ -32,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RailsApiKeys.configure` — optional `owner_class`, `token_prefix`, and `owner_active`
 - Install generator (`rails_api_keys:install`) for migration and initializer
 
-[Unreleased]: https://github.com/rubyroidlabs/rails_api_keys/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/rubyroidlabs/rails_api_keys/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/rubyroidlabs/rails_api_keys/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rubyroidlabs/rails_api_keys/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rubyroidlabs/rails_api_keys/releases/tag/v0.1.0

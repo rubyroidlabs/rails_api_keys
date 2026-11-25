@@ -83,10 +83,16 @@ end
 ## Usage
 
 ```ruby
-key, raw = current_user.create_api_key!(name: "Zapier", permission: :read)
+key, raw = current_user.create_api_key!(
+  name: "Zapier",
+  permission: :read,
+  allowed_ips: [ "203.0.113.10", "10.0.0.0/24" ] # optional; empty allows any IP
+)
 # Show `raw` once — it cannot be recovered later.
 
 RailsApiKeys::ApiKey.authenticate(raw) # => key or nil
+key.allows_ip?("203.0.113.10")         # => true
+key.update!(allowed_ips: [ "10.0.0.0/24" ])
 key.revoke!
 ```
 
@@ -106,7 +112,7 @@ Clients send:
 Authorization: Bearer <raw_token>
 ```
 
-`authenticate_api_key!` rejects missing/invalid tokens with 401, then enforces permission from the HTTP method: GET/HEAD require read; other methods require write (403 if the key lacks it).
+`authenticate_api_key!` rejects missing/invalid tokens with 401, then checks `allowed_ips` against `request.remote_ip` and enforces permission from the HTTP method: GET/HEAD require read; other methods require write (403 if the IP or permission is disallowed, without updating `last_used_at`).
 
 ## Permissions
 
@@ -115,7 +121,7 @@ Authorization: Bearer <raw_token>
 | `read` | allowed | forbidden |
 | `read_write` | allowed | allowed |
 
-Permissions are immutable after create. Revoke with `revoke!` (sets `revoked_at`).
+Permissions are immutable after create. `allowed_ips` accepts single IPv4/IPv6 addresses or CIDR ranges (or a comma/newline-separated string), defaults to `[]` (unrestricted), and can be updated after create. Revoke with `revoke!` (sets `revoked_at`).
 
 ## Security notes
 

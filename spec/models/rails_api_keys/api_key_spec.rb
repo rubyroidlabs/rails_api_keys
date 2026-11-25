@@ -115,4 +115,64 @@ RSpec.describe RailsApiKeys::ApiKey, type: :model do
       expect(key.errors[:permission]).to include("cannot be changed after creation")
     end
   end
+
+  describe "allowed_ips" do
+    it "defaults to an empty array and allows any IP" do
+      key, = described_class.generate_for!(owner: user, name: "Any IP", permission: :read)
+
+      expect(key.allowed_ips).to eq([])
+      expect(key.allows_ip?("203.0.113.10")).to be(true)
+      expect(key.allows_ip?(nil)).to be(true)
+    end
+
+    it "normalizes comma and newline separated strings" do
+      key, = described_class.generate_for!(
+        owner: user,
+        name: "Normalized",
+        permission: :read,
+        allowed_ips: " 203.0.113.10, 10.0.0.0/24\n203.0.113.10\n  "
+      )
+
+      expect(key.allowed_ips).to eq([ "203.0.113.10", "10.0.0.0/24" ])
+    end
+
+    it "allows matching single IPv4, CIDR range, IPv6, and IPv4-mapped IPv6" do
+      key, = described_class.generate_for!(
+        owner: user,
+        name: "Scoped",
+        permission: :read,
+        allowed_ips: [ "203.0.113.10", "10.0.0.0/24", "2001:db8::/32" ]
+      )
+
+      expect(key.allows_ip?("203.0.113.10")).to be(true)
+      expect(key.allows_ip?("::ffff:203.0.113.10")).to be(true)
+      expect(key.allows_ip?("10.0.0.42")).to be(true)
+      expect(key.allows_ip?("2001:db8::1")).to be(true)
+      expect(key.allows_ip?("198.51.100.5")).to be(false)
+      expect(key.allows_ip?("2001:db9::1")).to be(false)
+      expect(key.allows_ip?("")).to be(false)
+      expect(key.allows_ip?("not-an-ip")).to be(false)
+    end
+
+    it "rejects invalid IP addresses or CIDR ranges" do
+      expect {
+        described_class.generate_for!(
+          owner: user,
+          name: "Invalid",
+          permission: :read,
+          allowed_ips: [ "203.0.113.10", "999.999.999.999", "10.0.0.0/99" ]
+        )
+      }.to raise_error(ActiveRecord::RecordInvalid, /Allowed ips/)
+    end
+
+    it "allows updating allowed_ips after creation" do
+      key, = described_class.generate_for!(owner: user, name: "Mutable", permission: :read, allowed_ips: [ "203.0.113.10" ])
+
+      key.update!(allowed_ips: [ "10.0.0.0/24" ])
+
+      expect(key.reload.allowed_ips).to eq([ "10.0.0.0/24" ])
+      expect(key.allows_ip?("203.0.113.10")).to be(false)
+      expect(key.allows_ip?("10.0.0.5")).to be(true)
+    end
+  end
 end
